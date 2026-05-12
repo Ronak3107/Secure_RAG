@@ -1,0 +1,164 @@
+# sample.txt Content for SecureRAG Project
+
+SecureRAG Enterprise Security Policy Document
+
+Version: 1.0
+Organization: SecureRAG Technologies
+
+## Introduction
+
+SecureRAG Technologies follows a Zero Trust cybersecurity architecture to protect organizational resources, user identities, enterprise applications, and sensitive information. The organization enforces strict identity verification for every user and every device attempting to access internal systems.
+
+Zero Trust Architecture is a cybersecurity model based on strict identity verification regardless of whether the user is inside or outside the organization’s network perimeter.
+
+## Core Security Principles
+
+1. Never trust, always verify.
+2. Enforce least-privilege access.
+3. Continuously monitor all network activity.
+4. Encrypt sensitive data at rest and in transit.
+5. Maintain detailed audit logs for compliance.
+
+## Authentication Policy
+
+The organization uses JWT-based authentication for secure user sessions. All users must log in using verified credentials.
+
+### User Roles
+
+Guest:
+
+* Limited access to AI services.
+* Restricted from viewing sensitive data.
+* Can access public AI features.
+
+Admin:
+
+* Full access to enterprise features.
+* Can access advanced analytics.
+* Can review audit logs and compliance reports.
+* Can upload and analyze enterprise documents.
+
+## Data Loss Prevention (DLP)
+
+The DLP system automatically masks sensitive information from AI responses.
+
+### Sensitive Data Types
+
+1. Phone numbers
+2. Email addresses
+3. Aadhaar numbers
+4. Credit card information
+5. Passwords
+6. Confidential enterprise records
+
+### Example
+
+Input:
+Employee phone number is 9876543210
+
+Output:
+Employee phone number is [PHONE_REDACTED]
+
+## MCP Security Layer
+
+Model Context Protocol (MCP) is used to restrict unauthorized access to sensitive enterprise information.
+
+### Guest Restrictions
+
+Guests cannot:
+
+* Access patient information
+* View passwords
+* Retrieve confidential documents
+* Access credit card details
+* View audit logs
+
+### Admin Permissions
+
+Admins can:
+
+* Access security analytics
+* Review system logs
+* Monitor compliance metrics
+* Analyze uploaded documents
+* Access enterprise reporting dashboards
+
+## Audit Logging System
+
+Every user request is logged with:
+
+* User role
+* Timestamp
+* Query message
+* Security status
+* Allowed or blocked state
+
+Audit logs help maintain enterprise compliance and security governance.
+
+## Compliance Standards
+
+The organization follows multiple compliance frameworks:
+
+1. GDPR
+2. HIPAA
+3. ISO 27001
+4. SOC 2
+5. NIST Cybersecurity Framework
+
+## AI Security System
+
+The SecureRAG AI assistant uses enterprise-grade AI protection.
+
+### Features
+
+* Secure AI responses
+* Prompt filtering
+* DLP masking
+* Role-based authorization
+* Chat history monitoring
+* Real-time analytics
+
+## Threat Detection
+
+The system continuously monitors:
+
+* Unauthorized access attempts
+* Sensitive data requests
+* Prompt injection attacks
+* Malicious AI interactions
+* Suspicious user behavior
+
+## Security Analytics
+
+The analytics dashboard displays:
+
+* Total queries processed
+* Blocked security threats
+* Allowed AI requests
+* Compliance scores
+* User activity statistics
+
+## Enterprise Infrastructure
+
+Frontend Technology:
+
+* React.js
+* Material UI
+* Recharts
+
+Backend Technology:
+
+* Node.js
+* Express.js
+* MongoDB
+* JWT Authentication
+
+AI Infrastructure:
+
+* Groq API
+* Llama Models
+* Secure Prompt Pipeline
+
+## Conclusion
+
+SecureRAG Technologies provides a secure enterprise AI platform with advanced cybersecurity controls, AI governance, audit logging, DLP protection, and role-based access control. The platform demonstrates how modern organizations can safely integrate AI systems into enterprise environments while maintaining security and compliance.
