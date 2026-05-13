@@ -1,21 +1,52 @@
 const checkAccess = (role, message) => {
 
   const sensitiveKeywords = [
-    "phone",
-    "aadhaar",
-    "credit card",
-    "password",
+
+    "account",
+
     "patient",
+
+    "phone",
+
+    "email",
+
+    "financial",
+
+    "bank",
+
+    "confidential",
+
   ];
 
-  const isSensitive = sensitiveKeywords.some(
-    (word) =>
-      message.toLowerCase().includes(word)
+  const lowerMessage =
+  message.toLowerCase();
+
+  const isSensitive =
+  sensitiveKeywords.some(
+
+    keyword =>
+
+    lowerMessage.includes(keyword)
+
   );
 
-  // guest blocked
-  if (role === "guest" && isSensitive) {
+  // ADMIN CAN ACCESS EVERYTHING
+
+  if (role === "admin") {
+
+    return true;
+
+  }
+
+  // GUEST BLOCKED
+
+  if (
+    role === "guest" &&
+    isSensitive
+  ) {
+
     return false;
+
   }
 
   return true;

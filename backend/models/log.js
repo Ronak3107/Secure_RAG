@@ -9,6 +9,8 @@ const logSchema = new mongoose.Schema({
 
   status: String,
 
+  latency: Number,
+
   createdAt: {
     type: Date,
     default: Date.now,

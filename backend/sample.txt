@@ -162,3 +162,7 @@ AI Infrastructure:
 ## Conclusion
 
 SecureRAG Technologies provides a secure enterprise AI platform with advanced cybersecurity controls, AI governance, audit logging, DLP protection, and role-based access control. The platform demonstrates how modern organizations can safely integrate AI systems into enterprise environments while maintaining security and compliance.
+
+Patient Name: John
+Account Number: 998877
+Phone: 9876543210
