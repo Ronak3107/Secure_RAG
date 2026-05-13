@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Chat from "./pages/Chat";
 import Logs from "./pages/Logs";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Compliance from "./pages/Compliance";
 
 const theme = createTheme({
   palette: {
@@ -81,6 +82,10 @@ function App() {
               <Logs />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/compliance"
+          element={<Compliance />}
         />
       </Routes>
     </ThemeProvider>

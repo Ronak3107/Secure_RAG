@@ -14,6 +14,8 @@ const chatRoutes = require(
 const uploadRoutes = require(
   "./routes/uploadRoutes"
 );
+const complianceRoutes =
+require("./routes/complianceRoutes");
 
 dotenv.config();
 
@@ -29,6 +31,7 @@ app.use("/api/logs", logRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/compliance", complianceRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend Running");

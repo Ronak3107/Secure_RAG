@@ -35,6 +35,11 @@ function Sidebar() {
       path: "/logs",
       icon: <HistoryEduIcon />,
     },
+    {
+      label: "Compliance",
+      path: "/compliance",
+      icon: <ShieldIcon />,
+    },
   ];
 
   const handleLogout = () => {
