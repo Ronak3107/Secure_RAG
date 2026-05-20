@@ -1,60 +1,153 @@
+import { useState } from "react";
+
 import {
   Box,
   Typography,
   Button,
-  Paper,
-  Grid,
   Stack,
+  Paper,
+  TextField,
+  InputAdornment,
+  Divider,
   Chip,
   Avatar,
 } from "@mui/material";
 
-import SecurityIcon from "@mui/icons-material/Security";
-import InsightsIcon from "@mui/icons-material/Insights";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutlined";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import ShieldMoonIcon from "@mui/icons-material/ShieldMoon";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import {
+  Shield,
+  Sparkles,
+  Lock,
+  Mail,
+  ArrowRight,
+  Brain,
+  Database,
+  CheckCircle2,
+  Globe,
+  Bot,
+} from "lucide-react";
+
+import API from "../services/api";
 
 function Home() {
+
+  const [email, setEmail] =
+  useState("");
+
+  const [password, setPassword] =
+  useState("");
+
+  const [loading, setLoading] =
+  useState(false);
+
+  const handleLogin = async () => {
+
+    try {
+
+      setLoading(true);
+
+      const res =
+      await API.post(
+        "/auth/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      localStorage.setItem(
+        "token",
+        res.data.token
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(res.data.user)
+      );
+
+      window.location.href =
+      "/dashboard";
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Login Failed");
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
 
   return (
 
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#030712",
-        color: "white",
+        bgcolor: "#020617",
         overflow: "hidden",
         position: "relative",
+        color: "white",
       }}
     >
 
-      {/* BACKGROUND BLUR */}
+      {/* BACKGROUND */}
 
       <Box
         sx={{
           position: "absolute",
-          width: 400,
-          height: 400,
+          width: 650,
+          height: 650,
+          borderRadius: "50%",
           bgcolor: "#2563eb",
-          filter: "blur(180px)",
-          opacity: 0.25,
-          top: -120,
-          left: -120,
+          filter: "blur(260px)",
+          opacity: 0.16,
+          top: -250,
+          left: -180,
         }}
       />
 
       <Box
         sx={{
           position: "absolute",
-          width: 350,
-          height: 350,
+          width: 550,
+          height: 550,
+          borderRadius: "50%",
           bgcolor: "#7c3aed",
-          filter: "blur(180px)",
-          opacity: 0.18,
-          bottom: -100,
-          right: -100,
+          filter: "blur(240px)",
+          opacity: 0.14,
+          bottom: -220,
+          right: -150,
+        }}
+      />
+
+      {/* GRID LINES */}
+
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+
+          backgroundImage:
+          `
+          linear-gradient(
+            rgba(255,255,255,0.03) 1px,
+            transparent 1px
+          ),
+
+          linear-gradient(
+            90deg,
+            rgba(255,255,255,0.03) 1px,
+            transparent 1px
+          )
+          `,
+
+          backgroundSize: "80px 80px",
+
+          maskImage:
+          "radial-gradient(circle at center, black, transparent 90%)",
         }}
       />
 
@@ -62,85 +155,121 @@ function Home() {
 
       <Box
         sx={{
-          maxWidth: 1350,
-          mx: "auto",
-          px: { xs: 3, md: 6 },
-          py: 3,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
           position: "relative",
           zIndex: 2,
+
+          px: {
+            xs: 3,
+            md: 8,
+          },
+
+          py: 3.5,
+
+          display: "flex",
+
+          justifyContent:
+          "space-between",
+
+          alignItems: "center",
         }}
       >
 
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-          }}
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
         >
 
           <Avatar
             sx={{
-              bgcolor: "#2563eb",
-              width: 46,
-              height: 46,
-              fontWeight: "bold",
+              width: 54,
+              height: 54,
+
+              borderRadius: "18px",
+
+              background:
+              `
+              linear-gradient(
+                135deg,
+                #2563eb,
+                #7c3aed
+              )
+              `,
+
+              boxShadow:
+              "0 15px 40px rgba(59,130,246,0.35)",
             }}
           >
-            SR
+
+            <Shield size={26} />
+
           </Avatar>
 
           <Box>
 
             <Typography
-              variant="h6"
-              fontWeight="bold"
+              fontWeight="800"
+              fontSize="24px"
+              letterSpacing="-1px"
             >
               SecureRAG
             </Typography>
 
             <Typography
-              variant="body2"
-              color="gray"
+              fontSize="13px"
+              color="rgba(255,255,255,0.45)"
             >
-              Enterprise AI Security
+              Enterprise AI Security Platform
             </Typography>
 
           </Box>
 
-        </Box>
+        </Stack>
 
-        <Stack direction="row" spacing={2}>
-
-          <Button
-            href="/login"
-            sx={{
-              color: "white",
-              borderRadius: 3,
-              px: 3,
-            }}
-          >
-            Login
-          </Button>
+        <Stack
+          direction="row"
+          spacing={2}
+        >
 
           <Button
-            variant="contained"
             href="/signup"
+
+            variant="contained"
+
             sx={{
-              borderRadius: 3,
-              px: 4,
-              py: 1.2,
-              bgcolor: "#2563eb",
+
+              height: 48,
+
+              px: 3,
+
+              borderRadius: "16px",
+
               textTransform: "none",
+
               fontWeight: "bold",
+
+              background:
+              `
+              linear-gradient(
+                135deg,
+                #2563eb,
+                #7c3aed
+              )
+              `,
+
               boxShadow:
-              "0 10px 30px rgba(37,99,235,0.35)",
+              "0 12px 30px rgba(59,130,246,0.3)",
 
               "&:hover": {
-                bgcolor: "#1d4ed8",
+
+                background:
+                `
+                linear-gradient(
+                  135deg,
+                  #1d4ed8,
+                  #6d28d9
+                )
+                `,
               },
             }}
           >
@@ -151,447 +280,637 @@ function Home() {
 
       </Box>
 
-      {/* HERO SECTION */}
+      {/* MAIN SECTION */}
 
       <Box
         sx={{
-          maxWidth: 1350,
-          mx: "auto",
-          px: { xs: 3, md: 6 },
-          py: { xs: 8, md: 14 },
           position: "relative",
           zIndex: 2,
+
+          px: {
+            xs: 3,
+            md: 8,
+          },
+
+          pt: {
+            xs: 4,
+            md: 5,
+          },
+
+          pb: 8,
         }}
       >
 
-        <Grid
-          container
-          spacing={8}
-          alignItems="center"
+        <Box
+          sx={{
+            display: "grid",
+
+            gridTemplateColumns: {
+
+              xs: "1fr",
+
+              lg: "1.15fr 0.85fr",
+            },
+
+            gap: {
+              xs: 6,
+              md: 8,
+            },
+
+            alignItems: "center",
+          }}
         >
 
-          {/* LEFT */}
+          {/* LEFT SECTION */}
 
-          <Grid item xs={12} md={6}>
+          <Box>
 
-            <Chip
-              label="AI + Security + Compliance"
-              sx={{
-                bgcolor:
-                "rgba(37,99,235,0.12)",
+            {/* TAGS */}
 
-                color: "#60a5fa",
-                border:
-                "1px solid rgba(96,165,250,0.2)",
+            <Stack
+              direction="row"
+              spacing={2}
+              flexWrap="wrap"
+              mb={4}
+            >
 
-                mb: 4,
-              }}
-            />
+              <Chip
+                icon={
+                  <Sparkles size={16} />
+                }
+
+                label="AI Security"
+
+                sx={{
+                  height: 40,
+
+                  px: 1.5,
+
+                  borderRadius: "999px",
+
+                  bgcolor:
+                  "rgba(59,130,246,0.12)",
+
+                  border:
+                  "1px solid rgba(96,165,250,0.18)",
+
+                  color: "#93c5fd",
+
+                  fontWeight: "bold",
+                }}
+              />
+
+              
+
+            </Stack>
+
+            {/* HEADING */}
 
             <Typography
-              variant="h1"
-              fontWeight="bold"
               sx={{
                 fontSize: {
-                  xs: "3rem",
-                  md: "5rem",
+                  xs: "54px",
+                  md: "92px",
                 },
-                lineHeight: 1.05,
+
+                fontWeight: 900,
+
+                lineHeight: 0.95,
+
+                letterSpacing: "-5px",
+
                 mb: 4,
+                mt: 2,
+
+                background:
+                `
+                linear-gradient(
+                  180deg,
+                  #ffffff,
+                  #94a3b8
+                )
+                `,
+
+                WebkitBackgroundClip:
+                "text",
+
+                WebkitTextFillColor:
+                "transparent",
               }}
             >
-              Secure AI
+
+              Secure
               <br />
-              for Modern
+
+              Enterprise
               <br />
-              Enterprises
+
+              AI Platform
+
             </Typography>
+
+            {/* DESCRIPTION */}
 
             <Typography
               sx={{
-                color: "#94a3b8",
-                fontSize: "1.15rem",
-                lineHeight: 1.9,
-                maxWidth: 600,
+                fontSize: "18px",
+
+                color:
+                "rgba(255,255,255,0.62)",
+
+                lineHeight: 1.95,
+
+                maxWidth: 760,
+
                 mb: 5,
               }}
             >
-              Enterprise-grade secure AI platform
-              with RAG, MCP authorization,
-              DLP masking, audit logging,
-              compliance analytics,
-              and role-based access control.
+
+              SecureRAG is a modern
+              enterprise-grade AI platform
+              built for secure conversations,
+              intelligent compliance monitoring,
+              MCP authorization,
+              DLP protection,
+              and real-time audit logging.
+
+              <br /><br />
+
+              Designed for organizations
+              that need scalable,
+              governed,
+              and production-ready
+              AI infrastructure with
+              enterprise-level visibility
+              and control.
+
             </Typography>
+
+            {/* BUTTONS */}
 
             <Stack
               direction={{
                 xs: "column",
                 sm: "row",
               }}
+
               spacing={3}
+              mb={6}
             >
 
               <Button
-                variant="contained"
                 href="/signup"
-                endIcon={<ArrowForwardIcon />}
+
+                variant="contained"
+
+                endIcon={
+                  <ArrowRight size={18} />
+                }
+
                 sx={{
-                  bgcolor: "#2563eb",
-                  borderRadius: 4,
-                  px: 5,
-                  py: 1.8,
-                  fontWeight: "bold",
+
+                  height: 60,
+
+                  px: 4.5,
+
+                  borderRadius: "20px",
+
                   textTransform: "none",
-                  fontSize: "1rem",
+
+                  fontWeight: "bold",
+
+                  fontSize: "16px",
+
+                  background:
+                  `
+                  linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                  )
+                  `,
 
                   boxShadow:
-                  "0 12px 35px rgba(37,99,235,0.35)",
+                  "0 14px 40px rgba(59,130,246,0.35)",
 
                   "&:hover": {
-                    bgcolor: "#1d4ed8",
+
+                    background:
+                    `
+                    linear-gradient(
+                      135deg,
+                      #1d4ed8,
+                      #6d28d9
+                    )
+                    `,
                   },
                 }}
               >
-                Start Free
+                Signup Now
               </Button>
 
-              <Button
-                href="/dashboard"
-                sx={{
-                  color: "white",
-                  border:
-                  "1px solid rgba(255,255,255,0.08)",
-
-                  bgcolor:
-                  "rgba(255,255,255,0.03)",
-
-                  borderRadius: 4,
-                  px: 5,
-                  py: 1.8,
-                  textTransform: "none",
-                  backdropFilter: "blur(12px)",
-                }}
-              >
-                Open Dashboard
-              </Button>
+              
 
             </Stack>
 
-          </Grid>
+            {/* STATS */}
 
-          {/* RIGHT */}
+            
 
-          <Grid item xs={12} md={6}>
+          </Box>
 
-            <Paper
-              elevation={0}
+          {/* LOGIN PANEL */}
+
+          <Paper
+            sx={{
+
+              p: {
+                xs: 4,
+                md: 5,
+              },
+
+              borderRadius: "36px",
+
+              background:
+              "rgba(255,255,255,0.05)",
+
+              backdropFilter:
+              "blur(20px)",
+
+              border:
+              "1px solid rgba(255,255,255,0.08)",
+
+              boxShadow:
+              "0 20px 60px rgba(0,0,0,0.35)",
+
+              position: "relative",
+
+              overflow: "hidden",
+            }}
+          >
+
+            {/* CARD GLOW */}
+
+            <Box
               sx={{
-                p: 4,
-                borderRadius: 6,
-                bgcolor:
-                "rgba(255,255,255,0.05)",
+                position: "absolute",
+                width: 240,
+                height: 240,
 
-                border:
-                "1px solid rgba(255,255,255,0.08)",
+                borderRadius: "50%",
 
-                backdropFilter: "blur(18px)",
-                position: "relative",
-                overflow: "hidden",
+                bgcolor: "#2563eb",
+
+                filter: "blur(120px)",
+
+                opacity: 0.18,
+
+                top: -80,
+                right: -80,
               }}
+            />
+
+            {/* HEADER */}
+
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              mb={4}
             >
 
-              <Box
+              <Avatar
                 sx={{
-                  position: "absolute",
-                  inset: 0,
+                  width: 58,
+                  height: 58,
+
                   background:
-                  "linear-gradient(to bottom right, rgba(37,99,235,0.12), transparent)",
-                }}
-              />
+                  `
+                  linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                  )
+                  `,
 
-              <Stack spacing={3} position="relative">
-
-                <Paper
-                  sx={{
-                    p: 3,
-                    borderRadius: 4,
-                    bgcolor:
-                    "rgba(255,255,255,0.04)",
-
-                    border:
-                    "1px solid rgba(255,255,255,0.06)",
-                  }}
-                >
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mb: 2,
-                    }}
-                  >
-
-                    <SecurityIcon
-                      sx={{
-                        color: "#22c55e",
-                        fontSize: 34,
-                      }}
-                    />
-
-                    <Typography
-                      variant="h6"
-                      fontWeight="bold"
-                    >
-                      Secure AI Queries
-                    </Typography>
-
-                  </Box>
-
-                  <Typography
-                    color="#94a3b8"
-                    lineHeight={1.8}
-                  >
-                    Ask questions securely with
-                    real-time DLP masking,
-                    access control,
-                    and compliance enforcement.
-                  </Typography>
-
-                </Paper>
-
-                <Paper
-                  sx={{
-                    p: 3,
-                    borderRadius: 4,
-                    bgcolor:
-                    "rgba(255,255,255,0.04)",
-
-                    border:
-                    "1px solid rgba(255,255,255,0.06)",
-                  }}
-                >
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mb: 2,
-                    }}
-                  >
-
-                    <InsightsIcon
-                      sx={{
-                        color: "#38bdf8",
-                        fontSize: 34,
-                      }}
-                    />
-
-                    <Typography
-                      variant="h6"
-                      fontWeight="bold"
-                    >
-                      Security Analytics
-                    </Typography>
-
-                  </Box>
-
-                  <Typography
-                    color="#94a3b8"
-                    lineHeight={1.8}
-                  >
-                    Monitor blocked requests,
-                    audit logs,
-                    latency,
-                    and compliance metrics
-                    through real-time dashboards.
-                  </Typography>
-
-                </Paper>
-
-                <Paper
-                  sx={{
-                    p: 3,
-                    borderRadius: 4,
-                    bgcolor:
-                    "rgba(255,255,255,0.04)",
-
-                    border:
-                    "1px solid rgba(255,255,255,0.06)",
-                  }}
-                >
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mb: 2,
-                    }}
-                  >
-
-                    <ShieldMoonIcon
-                      sx={{
-                        color: "#a855f7",
-                        fontSize: 34,
-                      }}
-                    />
-
-                    <Typography
-                      variant="h6"
-                      fontWeight="bold"
-                    >
-                      Role Based Access
-                    </Typography>
-
-                  </Box>
-
-                  <Typography
-                    color="#94a3b8"
-                    lineHeight={1.8}
-                  >
-                    Admin, analyst,
-                    and guest access levels
-                    with MCP authorization
-                    and enterprise-style security layers.
-                  </Typography>
-
-                </Paper>
-
-              </Stack>
-
-            </Paper>
-
-          </Grid>
-
-        </Grid>
-
-        {/* FEATURE CARDS */}
-
-        <Grid
-          container
-          spacing={4}
-          mt={8}
-        >
-
-          {[
-
-            {
-              title: "AI Assistant",
-              desc:
-              "Modern conversational AI powered by Groq LLM with secure enterprise workflows.",
-              icon:
-              <ChatBubbleOutlineIcon
-                sx={{
-                  color: "#60a5fa",
-                  fontSize: 34,
-                }}
-              />,
-            },
-
-            {
-              title: "Compliance Monitoring",
-              desc:
-              "Track DLP protection, MCP authorization, audit events, and compliance health.",
-              icon:
-              <SecurityIcon
-                sx={{
-                  color: "#22c55e",
-                  fontSize: 34,
-                }}
-              />,
-            },
-
-            {
-              title: "Enterprise Analytics",
-              desc:
-              "Interactive dashboards for threat detection, blocked queries, and AI activity monitoring.",
-              icon:
-              <InsightsIcon
-                sx={{
-                  color: "#f59e0b",
-                  fontSize: 34,
-                }}
-              />,
-            },
-
-            {
-              title: "Secure RAG",
-              desc:
-              "AI answers only from uploaded enterprise documents using secure retrieval pipelines.",
-              icon:
-              <AutoAwesomeIcon
-                sx={{
-                  color: "#a855f7",
-                  fontSize: 34,
-                }}
-              />,
-            },
-
-          ].map((item, index) => (
-
-            <Grid
-              item
-              xs={12}
-              md={6}
-              lg={3}
-              key={index}
-            >
-
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 4,
-                  borderRadius: 5,
-                  bgcolor:
-                  "rgba(255,255,255,0.04)",
-
-                  border:
-                  "1px solid rgba(255,255,255,0.08)",
-
-                  backdropFilter: "blur(12px)",
-
-                  transition: "0.3s",
-
-                  height: "100%",
-
-                  "&:hover": {
-                    transform:
-                    "translateY(-8px)",
-
-                    border:
-                    "1px solid rgba(96,165,250,0.25)",
-                  },
+                  boxShadow:
+                  "0 12px 30px rgba(59,130,246,0.35)",
                 }}
               >
 
-                <Box mb={3}>
-                  {item.icon}
-                </Box>
+                <Bot size={26} />
+
+              </Avatar>
+
+              <Box>
 
                 <Typography
-                  variant="h6"
+                  variant="h4"
                   fontWeight="bold"
-                  mb={2}
                 >
-                  {item.title}
+                  Login Now
                 </Typography>
 
-                <Typography
-                  color="#94a3b8"
-                  lineHeight={1.8}
-                >
-                  {item.desc}
-                </Typography>
+              
 
-              </Paper>
+              </Box>
 
-            </Grid>
+            </Stack>
 
-          ))}
+            {/* EMAIL */}
 
-        </Grid>
+            <Typography
+              mb={1.2}
+              mt={3}
+              fontWeight="bold"
+            >
+              Email Address
+            </Typography>
+
+            <TextField
+              fullWidth
+
+              placeholder=
+              "Enter your email"
+
+              value={email}
+
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
+
+              sx={{
+
+                mb: 3.5,
+
+                "& .MuiOutlinedInput-root": {
+
+                  height: 58,
+
+                  borderRadius: "18px",
+
+                  color: "white",
+
+                  background:
+                  "rgba(255,255,255,0.04)",
+
+                  "& fieldset": {
+
+                    borderColor:
+                    "rgba(255,255,255,0.08)",
+                  },
+
+                  "&:hover fieldset": {
+
+                    borderColor:
+                    "rgba(255,255,255,0.16)",
+                  },
+
+                  "&.Mui-focused fieldset": {
+
+                    borderColor:
+                    "#2563eb",
+                  },
+                },
+              }}
+
+              InputProps={{
+                startAdornment: (
+
+                  <InputAdornment position="start">
+
+                    <Mail
+                      size={18}
+                    />
+
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            {/* PASSWORD */}
+
+            <Typography
+              mb={1.2}
+              fontWeight="bold"
+            >
+              Password
+            </Typography>
+
+            <TextField
+              fullWidth
+
+              type="password"
+
+              placeholder=
+              "Enter your password"
+
+              value={password}
+
+              onChange={(e) =>
+                setPassword(
+                  e.target.value
+                )
+              }
+
+              sx={{
+
+                "& .MuiOutlinedInput-root": {
+
+                  height: 58,
+
+                  borderRadius: "18px",
+
+                  color: "white",
+
+                  background:
+                  "rgba(255,255,255,0.04)",
+
+                  "& fieldset": {
+
+                    borderColor:
+                    "rgba(255,255,255,0.08)",
+                  },
+
+                  "&:hover fieldset": {
+
+                    borderColor:
+                    "rgba(255,255,255,0.16)",
+                  },
+
+                  "&.Mui-focused fieldset": {
+
+                    borderColor:
+                    "#2563eb",
+                  },
+                },
+              }}
+
+              InputProps={{
+                startAdornment: (
+
+                  <InputAdornment position="start">
+
+                    <Lock
+                      size={18}
+                    />
+
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            {/* BUTTON */}
+
+            <Button
+              fullWidth
+
+              variant="contained"
+
+              onClick={handleLogin}
+
+              disabled={loading}
+
+              endIcon={
+                <ArrowRight size={18} />
+              }
+
+              sx={{
+
+                mt: 4,
+
+                height: 60,
+
+                borderRadius: "20px",
+
+                textTransform: "none",
+
+                fontWeight: "bold",
+
+                fontSize: "16px",
+
+                background:
+                `
+                linear-gradient(
+                  135deg,
+                  #2563eb,
+                  #7c3aed
+                )
+                `,
+
+                boxShadow:
+                "0 14px 40px rgba(59,130,246,0.35)",
+
+                "&:hover": {
+
+                  background:
+                  `
+                  linear-gradient(
+                    135deg,
+                    #1d4ed8,
+                    #6d28d9
+                  )
+                  `,
+                },
+              }}
+            >
+
+              {
+                loading
+                ? "Signing In..."
+                : "Login Securely"
+              }
+
+            </Button>
+
+            <Divider
+              sx={{
+                my: 4,
+
+                borderColor:
+                "rgba(255,255,255,0.08)",
+              }}
+            />
+
+            {/* FEATURES */}
+
+            <Stack spacing={2.5}>
+
+              {
+
+                [
+
+                  {
+                    icon:
+                    <Shield size={18} />,
+
+                    text:
+                    "Enterprise-grade AI security",
+                  },
+
+                  {
+                    icon:
+                    <CheckCircle2 size={18} />,
+
+                    text:
+                    "Real-time DLP protection",
+                  },
+
+                  {
+                    icon:
+                    <Globe size={18} />,
+
+                    text:
+                    "Modern MCP authorization",
+                  },
+
+                ].map((item, index) => (
+
+                  <Stack
+                    key={index}
+
+                    direction="row"
+
+                    spacing={2}
+
+                    alignItems="center"
+                  >
+
+                    <Avatar
+                      sx={{
+                        width: 38,
+                        height: 38,
+
+                        bgcolor:
+                        "rgba(255,255,255,0.06)",
+
+                        color: "#60a5fa",
+                      }}
+                    >
+
+                      {item.icon}
+
+                    </Avatar>
+
+                    <Typography
+                      color="rgba(255,255,255,0.68)"
+                    >
+                      {item.text}
+                    </Typography>
+
+                  </Stack>
+
+                ))
+
+              }
+
+            </Stack>
+
+          </Paper>
+
+        </Box>
 
       </Box>
 
