@@ -4,324 +4,777 @@ import {
   Grid,
   Paper,
   Chip,
-  Button,
-  Alert,
+  LinearProgress,
   Stack,
+  Avatar,
+  Divider,
 } from "@mui/material";
+
+import {
+  Shield,
+  Lock,
+ Activity,
+  Database,
+  CheckCircle2,
+  AlertTriangle,
+  Sparkles,
+  ShieldCheck,
+  GlobeLock,
+  Radar,
+} from "lucide-react";
 
 import Sidebar from "../layouts/Sidebar";
 
-import { useEffect, useState }
-from "react";
+import { useEffect, useState } from "react";
 
 import axios from "axios";
 
 function Compliance() {
-  const [stats, setStats] = useState(null);
-  const [uploadFile, setUploadFile] = useState(null);
-  const [uploadStatus, setUploadStatus] = useState("");
-  const [uploadError, setUploadError] = useState("");
-  const [uploading, setUploading] = useState(false);
 
-  const complianceData = [
-        {
-            title: "GDPR",
-            status: "Compliant",
-            score:
-            `${stats?.gdprScore || 0}%`,
-        },
-        {
-            title: "HIPAA",
-            status: "Compliant",
-            score:
-            `${stats?.hipaaScore || 0}%`,
-        },
-        {
-            title: "ISO 27001",
-            status: "Compliant",
-            score:
-            `${stats?.isoScore || 0}%`,
-        },
-        {
-            title: "SOC 2",
-            status: "Compliant",
-            score:
-            `${stats?.socScore || 0}%`,
-        },
-    ];
+  const [stats, setStats] =
+  useState(null);
+
+  const user =
+  JSON.parse(
+    localStorage.getItem("user")
+  );
 
   useEffect(() => {
+
     fetchCompliance();
+
   }, []);
 
   const fetchCompliance = async () => {
+
     try {
-      const res = await axios.get("http://localhost:5000/api/compliance");
+
+      const token =
+      localStorage.getItem("token");
+
+      const res =
+      await axios.get(
+        "http://localhost:5000/api/compliance",
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
       setStats(res.data);
+
     } catch (error) {
+
       console.log(error);
+
     }
+
   };
 
-  const handleFileChange = (event) => {
-    setUploadError("");
-    setUploadStatus("");
-    setUploadFile(event.target.files[0] || null);
-  };
+  const complianceData = [
 
-  const handleUpload = async () => {
-    if (!uploadFile) {
-      setUploadError("Please choose a file to upload.");
-      return;
-    }
+    {
+      title: "GDPR",
+      score: stats?.gdprScore || 0,
+      icon: <Shield size={22} />,
+    },
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setUploadError("You must be logged in to upload a document.");
-      return;
-    }
+    {
+      title: "HIPAA",
+      score: stats?.hipaaScore || 0,
+      icon: <Lock size={22} />,
+    },
 
-    const formData = new FormData();
-    formData.append("file", uploadFile);
+    {
+      title: "ISO 27001",
+      score: stats?.isoScore || 0,
+      icon: <Database size={22} />,
+    },
 
-    try {
-      setUploading(true);
-      const res = await axios.post("http://localhost:5000/api/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    {
+      title: "SOC 2",
+      score: stats?.socScore || 0,
+      icon: <Activity size={22} />,
+    },
 
-      setUploadStatus(`Uploaded ${uploadFile.name} successfully.`);
-      setUploadError("");
-      setUploadFile(null);
-      fetchCompliance();
-    } catch (error) {
-      setUploadError(error.response?.data?.error || error.message);
-      setUploadStatus("");
-    } finally {
-      setUploading(false);
-    }
-  };
+  ];
 
   return (
+
     <Box
       sx={{
         display: "flex",
-        bgcolor: "#0f172a",
+
         minHeight: "100vh",
+
+        background:
+        `
+        radial-gradient(
+          circle at top left,
+          rgba(59,130,246,0.15),
+          transparent 25%
+        ),
+
+        radial-gradient(
+          circle at bottom right,
+          rgba(168,85,247,0.12),
+          transparent 25%
+        ),
+
+        #020617
+        `,
       }}
     >
 
+      {/* SIDEBAR */}
+
       <Sidebar />
+
+      {/* MAIN */}
 
       <Box
         sx={{
-          ml: "250px",
-          p: 4,
-          width: "100%",
+          flex: 1,
+
+          p: {
+            xs: 2,
+            md: 4,
+          },
+
           color: "white",
         }}
       >
 
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          mb={1}
-        >
-          Compliance Dashboard
-        </Typography>
-
-        <Typography
-          color="text.secondary"
-          mb={4}
-          maxWidth={720}
-        >
-          Upload a policy or sample document to load it into the application
-          context as document content and improve AI compliance handling.
-        </Typography>
-
-        <Paper
+        <Box
           sx={{
-            p: 3,
-            mb: 4,
-            bgcolor: "#1e293b",
-            color: "white",
-            borderRadius: 3,
+            maxWidth: 1350,
+            mx: "auto",
           }}
         >
-          <Stack spacing={2}>
-            <Typography variant="h6" fontWeight="bold">
-              Upload sample.txt
-            </Typography>
-            <input
-              type="file"
-              accept=".txt"
-              onChange={handleFileChange}
-              style={{ color: "white" }}
+
+          {/* HERO */}
+
+          <Paper
+            sx={{
+              p: {
+                xs: 3,
+                md: 5,
+              },
+
+              borderRadius: "32px",
+
+              background:
+              "rgba(255,255,255,0.05)",
+
+              border:
+              "1px solid rgba(255,255,255,0.08)",
+
+              backdropFilter:
+              "blur(18px)",
+
+              overflow: "hidden",
+
+              position: "relative",
+
+              mb: 4,
+
+              boxShadow:
+              "0 15px 40px rgba(0,0,0,0.3)",
+            }}
+          >
+
+            {/* GLOW */}
+
+            <Box
+              sx={{
+                position: "absolute",
+
+                width: 300,
+                height: 300,
+
+                borderRadius: "50%",
+
+                bgcolor:
+                "rgba(59,130,246,0.12)",
+
+                filter: "blur(100px)",
+
+                top: -100,
+                right: -80,
+              }}
             />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleUpload}
-              disabled={uploading}
-            >
-              {uploading ? "Uploading..." : "Upload Document"}
-            </Button>
-            {uploadStatus && (
-              <Alert severity="success">{uploadStatus}</Alert>
-            )}
-            {uploadError && (
-              <Alert severity="error">{uploadError}</Alert>
-            )}
-          </Stack>
-        </Paper>
 
-        <Grid container spacing={3}>
+            <Stack
+              direction={{
+                xs: "column",
+                md: "row",
+              }}
 
-          {complianceData.map((item) => (
+              justifyContent="space-between"
 
-            <Grid
-              item
-              xs={12}
-              md={6}
-              key={item.title}
+              alignItems={{
+                xs: "flex-start",
+                md: "center",
+              }}
+
+              spacing={3}
+
+              sx={{
+                position: "relative",
+                zIndex: 2,
+              }}
             >
 
-              <Paper
-                sx={{
-                  p: 3,
-                  bgcolor: "#1e293b",
-                  color: "white",
-                  borderRadius: 3,
-                }}
-              >
-
-                <Typography
-                  variant="h5"
-                  fontWeight="bold"
-                >
-                  {item.title}
-                </Typography>
+              <Box>
 
                 <Chip
-                  label={item.status}
-                  color="success"
-                  sx={{ mt: 2 }}
+                  icon={
+                    <Sparkles size={16} />
+                  }
+
+                  label="AI Compliance Intelligence"
+
+                  sx={{
+                    mb: 3,
+
+                    bgcolor:
+                    "rgba(59,130,246,0.12)",
+
+                    color: "#60a5fa",
+
+                    fontWeight: "bold",
+                  }}
                 />
 
                 <Typography
                   variant="h3"
+                  fontWeight="bold"
+                >
+                  Compliance Dashboard
+                </Typography>
+
+                <Typography
+                  color="rgba(255,255,255,0.7)"
+                  sx={{
+                    mt: 2,
+                    maxWidth: 700,
+                    lineHeight: 1.5,
+                  }}
+                >
+
+                  Monitor AI compliance across GDPR, HIPAA, ISO 27001, and SOC 2 frameworks. Get real-time insights, audit logs, and security analytics to ensure your enterprise AI is secure and compliant.
+
+                </Typography>
+
+              </Box>
+
+              <Avatar
+                sx={{
+                  width: 90,
+                  height: 90,
+
+                  bgcolor:
+                  "rgba(59,130,246,0.12)",
+
+                  border:
+                  "1px solid rgba(255,255,255,0.08)",
+
+                  backdropFilter:
+                  "blur(14px)",
+                }}
+              >
+
+                <ShieldCheck
+                  size={42}
+                  color="#60a5fa"
+                />
+
+              </Avatar>
+
+            </Stack>
+
+          </Paper>
+
+          {
+
+            user?.role === "admin"
+
+            ? (
+
+              <>
+
+                {/* COMPLIANCE GRID */}
+
+                <Grid
+                  container
+                  spacing={3}
+                >
+
+                  {
+
+                    complianceData.map((item) => (
+
+                      <Grid
+                        item
+                        xs={12}
+                        md={6}
+                        key={item.title}
+                      >
+
+                        <Paper
+                          sx={{
+                            p: 3,
+
+                            borderRadius: "28px",
+
+                            background:
+                            "rgba(255,255,255,0.04)",
+
+                            border:
+                            "1px solid rgba(255,255,255,0.08)",
+
+                            backdropFilter:
+                            "blur(16px)",
+
+                            transition:
+                            "0.35s ease",
+
+                            overflow: "hidden",
+
+                            position: "relative",
+
+                            "&:hover": {
+
+                              transform:
+                              "translateY(-6px)",
+
+                              border:
+                              "1px solid rgba(96,165,250,0.25)",
+
+                              boxShadow:
+                              "0 20px 40px rgba(0,0,0,0.28)",
+                            },
+                          }}
+                        >
+
+                          <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            alignItems="center"
+                            mb={3}
+                          >
+
+                            <Box>
+
+                              <Typography
+                                variant="h6"
+                                fontWeight="bold"
+                              >
+                                {item.title}
+                              </Typography>
+
+                              <Typography
+                                color="rgba(255,255,255,0.55)"
+                                fontSize="14px"
+                              >
+                                Compliance Framework
+                              </Typography>
+
+                            </Box>
+
+                            <Avatar
+                              sx={{
+                                bgcolor:
+                                "rgba(59,130,246,0.12)",
+
+                                color: "#60a5fa",
+
+                                width: 54,
+                                height: 54,
+                              }}
+                            >
+                              {item.icon}
+                            </Avatar>
+
+                          </Stack>
+
+                          <Typography
+                            variant="h2"
+                            fontWeight="bold"
+                            mb={2}
+                          >
+                            {item.score}%
+                          </Typography>
+
+                          <LinearProgress
+                            variant="determinate"
+                            value={item.score}
+
+                            sx={{
+                              height: 10,
+
+                              borderRadius: 20,
+
+                              bgcolor:
+                              "rgba(255,255,255,0.06)",
+
+                              "& .MuiLinearProgress-bar": {
+
+                                borderRadius: 20,
+
+                                bgcolor:
+
+                                item.score >= 90
+
+                                ? "#22c55e"
+
+                                : "#f59e0b",
+                              },
+                            }}
+                          />
+
+                          <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            alignItems="center"
+                            mt={3}
+                          >
+
+                            <Chip
+                              label={
+                                item.score >= 90
+                                ? "Compliant"
+                                : "Risk"
+                              }
+
+                              sx={{
+                                mt: 1.5,
+                                bgcolor:
+
+                                item.score >= 90
+
+                                ? "rgba(34,197,94,0.12)"
+
+                                : "rgba(245,158,11,0.12)",
+
+                                color:
+
+                                item.score >= 90
+
+                                ? "#22c55e"
+
+                                : "#f59e0b",
+
+                                fontWeight: "bold",
+                              }}
+                            />
+
+                            
+
+                          </Stack>
+
+                        </Paper>
+
+                      </Grid>
+
+                    ))
+
+                  }
+
+                </Grid>
+
+                {/* STATS */}
+
+                <Grid
+                  container
+                  spacing={3}
+                  mt={4}
+                >
+
+                  {
+
+                    [
+
+                      {
+                        title: "Total Queries",
+                        value:
+                        stats?.totalLogs || 0,
+
+                        icon:
+                        <Radar size={22} />,
+
+                        color: "#60a5fa",
+                      },
+
+                      {
+                        title: "Blocked Requests",
+                        value:
+                        stats?.blockedLogs || 0,
+
+                        icon:
+                        <Shield size={22} />,
+
+                        color: "#ef4444",
+                      },
+
+                      {
+                        title: "Avg Latency",
+                        value:
+                        `${stats?.avgLatency || 0} ms`,
+
+                        icon:
+                        <GlobeLock size={22} />,
+
+                        color: "#22c55e",
+                      },
+
+                    ].map((item) => (
+
+                      <Grid
+                        item
+                        xs={12}
+                        md={4}
+                        key={item.title}
+                      >
+
+                        <Paper
+                          sx={{
+                            p: 3,
+
+                            borderRadius: "28px",
+
+                            background:
+                            "rgba(255,255,255,0.04)",
+
+                            border:
+                            "1px solid rgba(255,255,255,0.08)",
+
+                            backdropFilter:
+                            "blur(16px)",
+
+                            transition:
+                            "0.3s ease",
+
+                            "&:hover": {
+
+                              transform:
+                              "translateY(-5px)",
+                            },
+                          }}
+                        >
+
+                          <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            alignItems="center"
+                          >
+
+                            <Box>
+
+                              <Typography
+                                color="rgba(255,255,255,0.55)"
+                              >
+                                {item.title}
+                              </Typography>
+
+                              <Typography
+                                variant="h3"
+                                fontWeight="bold"
+                                mt={1}
+                              >
+                                {item.value}
+                              </Typography>
+
+                            </Box>
+
+                            <Avatar
+                              sx={{
+                                bgcolor:
+                                `${item.color}20`,
+
+                                color:
+                                item.color,
+
+                                width: 56,
+                                height: 56,
+                              }}
+                            >
+                              {item.icon}
+                            </Avatar>
+
+                          </Stack>
+
+                        </Paper>
+
+                      </Grid>
+
+                    ))
+
+                  }
+
+                </Grid>
+
+                {/* SECURITY SUMMARY */}
+
+                <Paper
+                  sx={{
+                    mt: 4,
+
+                    p: 4,
+
+                    borderRadius: "30px",
+
+                    background:
+                    "rgba(255,255,255,0.04)",
+
+                    border:
+                    "1px solid rgba(255,255,255,0.08)",
+
+                    backdropFilter:
+                    "blur(16px)",
+                  }}
+                >
+
+                  <Typography
+                    variant="h5"
+                    fontWeight="bold"
+                    mb={3}
+                  >
+                    Security Audit Summary
+                  </Typography>
+
+                  <Divider
+                    sx={{
+                      borderColor:
+                      "rgba(255,255,255,0.08)",
+
+                      mb: 4,
+                    }}
+                  />
+
+                  <Grid
+                    container
+                    spacing={3}
+                  >
+
+                    {
+
+                      [
+
+                        "Threat Detection Active",
+
+                        "DLP Protection Enabled",
+
+                        "MCP Authorization Active",
+
+                        "Secure Document Access",
+
+                        "Role Based Access Control",
+
+                        "Encrypted Audit Logging",
+
+                      ].map((item) => (
+
+                        <Grid
+                          item
+                          xs={12}
+                          md={6}
+                          key={item}
+                        >
+
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            alignItems="center"
+                          >
+
+                            <CheckCircle2
+                              size={20}
+                              color="#22c55e"
+                            />
+
+                            <Typography
+                              color="rgba(255,255,255,0.82)"
+                            >
+                              {item}
+                            </Typography>
+
+                          </Stack>
+
+                        </Grid>
+
+                      ))
+
+                    }
+
+                  </Grid>
+
+                </Paper>
+
+              </>
+
+            )
+
+            : (
+
+              <Paper
+                sx={{
+                  p: 5,
+
+                  borderRadius: "28px",
+
+                  textAlign: "center",
+
+                  background:
+                  "rgba(255,255,255,0.04)",
+
+                  border:
+                  "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+
+                <AlertTriangle
+                  size={52}
+                  color="#f59e0b"
+                />
+
+                <Typography
+                  variant="h5"
+                  fontWeight="bold"
                   mt={3}
                 >
-                  {item.score}
+                  Restricted Access
+                </Typography>
+
+                <Typography
+                  mt={2}
+                  color="rgba(255,255,255,0.65)"
+                >
+
+                  Compliance analytics,
+                  governance insights,
+                  enterprise monitoring,
+                  and security controls
+                  are available only
+                  for admin users.
+
                 </Typography>
 
               </Paper>
 
-            </Grid>
+            )
 
-          ))}
+          }
 
-        </Grid>
-
-        <Grid container spacing={3} mt={2}>
-          <Grid item xs={12} md={4}>
-            <Paper
-              sx={{
-                p: 3,
-                bgcolor: "#1e293b",
-                color: "white",
-              }}
-            >
-              <Typography variant="h6">
-                Total Logs
-              </Typography>
-              <Typography variant="h3">
-                {stats?.totalLogs}
-              </Typography>
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Paper
-              sx={{
-                p: 3,
-                bgcolor: "#1e293b",
-                color: "white",
-              }}
-            >
-              <Typography variant="h6">
-                Blocked Requests
-              </Typography>
-              <Typography variant="h3">
-                {stats?.blockedLogs}
-              </Typography>
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Paper
-              sx={{
-                p: 3,
-                bgcolor: "#1e293b",
-                color: "white",
-              }}
-            >
-              <Typography variant="h6">
-                Avg Latency
-              </Typography>
-              <Typography variant="h3">
-                {stats?.avgLatency} ms
-              </Typography>
-            </Paper>
-          </Grid>
-        </Grid>
-
-        <Paper
-          sx={{
-            mt: 4,
-            p: 4,
-            bgcolor: "#1e293b",
-            color: "white",
-            borderRadius: 3,
-          }}
-        >
-
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            mb={2}
-          >
-            Security Audit Summary
-          </Typography>
-
-          <Typography>
-            Last Audit: 10 May 2026
-          </Typography>
-
-          <Typography mt={1}>
-            Threat Detection Status:
-            Active
-          </Typography>
-
-          <Typography mt={1}>
-            DLP Protection:
-            Enabled
-          </Typography>
-
-          <Typography mt={1}>
-            MCP Authorization:
-            Active
-          </Typography>
-
-        </Paper>
+        </Box>
 
       </Box>
 
     </Box>
+
   );
+
 }
 
 export default Compliance;

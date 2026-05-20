@@ -1,18 +1,37 @@
-let documentContent = "";
+const fs = require("fs");
 
-const setDocumentContent = (
-  content
-) => {
+const path = require("path");
 
-  documentContent = content;
-};
+function getDocumentContent() {
 
-const getDocumentContent = () => {
+  try {
 
-  return documentContent;
-};
+    const filePath = path.join(
+
+      __dirname,
+
+      "../uploads/samplefile.txt"
+
+    );
+
+    const content =
+    fs.readFileSync(
+      filePath,
+      "utf-8"
+    );
+
+    return content;
+
+  } catch (error) {
+
+    console.log(error);
+
+    return "No document uploaded.";
+
+  }
+
+}
 
 module.exports = {
-  setDocumentContent,
   getDocumentContent,
 };

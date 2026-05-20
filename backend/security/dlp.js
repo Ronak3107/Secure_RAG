@@ -1,30 +1,58 @@
-const maskSensitiveData = (text) => {
+function maskSensitiveData(text) {
 
-  // phone numbers
+  // ACCOUNT NUMBER CONTEXT
+
   text = text.replace(
+
+    /((account number|bank account)[^0-9]*)(\d+)/gi,
+
+    "$1[ACCOUNT MASKED]"
+
+  );
+
+  // PHONE NUMBER CONTEXT
+
+  text = text.replace(
+
+    /((phone number|mobile number|contact number)[^0-9]*)(\d+)/gi,
+
+    "$1[PHONE MASKED]"
+
+  );
+
+  // STANDALONE ACCOUNT NUMBERS
+  // 11-18 digits
+
+  text = text.replace(
+
+    /\b\d{11,18}\b/g,
+
+    "[ACCOUNT MASKED]"
+
+  );
+
+  // STANDALONE PHONE NUMBERS
+  // 10 digits
+
+  text = text.replace(
+
     /\b\d{10}\b/g,
-    "[PHONE_REDACTED]"
+
+    "[PHONE MASKED]"
+
   );
 
-  // emails
-  text = text.replace(
-    /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-    "[EMAIL_REDACTED]"
-  );
+  // EMAILS
 
-  // Aadhaar
   text = text.replace(
-    /\b\d{12}\b/g,
-    "[AADHAAR_REDACTED]"
-  );
 
-  // credit card
-  text = text.replace(
-    /\b\d{16}\b/g,
-    "[CARD_REDACTED]"
+    /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi,
+
+    "[EMAIL MASKED]"
+
   );
 
   return text;
-};
+}
 
 module.exports = maskSensitiveData;

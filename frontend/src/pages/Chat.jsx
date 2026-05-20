@@ -1,4 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+} from "react";
+
 import {
   Box,
   Typography,
@@ -6,244 +11,898 @@ import {
   Button,
   Paper,
   CircularProgress,
+  Avatar,
+  Chip,
+  Stack,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+
+import {
+  Send,
+  Shield,
+  Bot,
+  User,
+  Sparkles,
+  Trash2,
+  Zap,
+  Lock,
+} from "lucide-react";
+
+import Sidebar from "../layouts/Sidebar";
 import API from "../services/api";
 
 function Chat() {
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState([
+
+  const user =
+  JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  const [input, setInput] =
+  useState("");
+
+  const [loading, setLoading] =
+  useState(false);
+
+  const [messages, setMessages] =
+  useState([
     {
       sender: "ai",
-      text: "Hello Ronak 👋 Secure AI Assistant Ready.",
+      text:
+      `Hey ${user?.name} 👋
+
+Welcome to SecureRAG AI.
+
+Your enterprise-grade secure AI workspace is now active.`,
     },
   ]);
-  const messagesEndRef = useRef(null);
+
+  const messagesEndRef =
+  useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    messagesEndRef.current
+    ?.scrollIntoView({
+      behavior: "smooth",
+    });
+
   };
 
   useEffect(() => {
+
     scrollToBottom();
+
   }, [messages]);
 
   useEffect(() => {
+
     fetchHistory();
+
   }, []);
 
   const fetchHistory = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await API.get("/chat/history", {
-        headers: {
-          Authorization: token,
-        },
-      });
-
-      const formattedChats = res.data.map((chat) => ({
-        sender: chat.sender,
-        text: chat.text,
-      }));
-
-      setMessages(formattedChats);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleSend = async () => {
-    if (!input.trim()) return;
-
-    const userMessage = {
-      sender: "user",
-      text: input,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await API.post(
-        "/ai/chat",
-        {
-          message: input,
-        },
+
+      const token =
+      localStorage.getItem("token");
+
+      const res =
+      await API.get(
+
+        "/chat/history",
+
         {
           headers: {
             Authorization: token,
           },
         }
+
+      );
+
+      const formattedChats =
+      res.data.map((chat) => ({
+
+        sender: chat.sender,
+        text: chat.text,
+
+      }));
+
+      if (formattedChats.length > 0) {
+
+        setMessages(formattedChats);
+
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+  };
+
+  const handleSend = async () => {
+
+    if (!input.trim()) return;
+
+    const userMessage = {
+
+      sender: "user",
+      text: input,
+
+    };
+
+    setMessages((prev) => [
+
+      ...prev,
+      userMessage,
+
+    ]);
+
+    setLoading(true);
+
+    try {
+
+      const token =
+      localStorage.getItem("token");
+
+      const res =
+      await API.post(
+
+        "/ai/chat",
+
+        {
+          message: input,
+        },
+
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+
       );
 
       const aiMessage = {
+
         sender: "ai",
-        text: res.data.reply,
+
+        text:
+        res.data.reply,
+
       };
 
-      setMessages((prev) => [...prev, aiMessage]);
-    } catch (error) {
-      console.log(error);
       setMessages((prev) => [
+
         ...prev,
+        aiMessage,
+
+      ]);
+
+    } catch (error) {
+
+      console.log(error);
+
+      setMessages((prev) => [
+
+        ...prev,
+
         {
           sender: "ai",
-          text: "AI request failed. Please try again.",
+
+          text:
+          "Secure AI request failed. Please try again.",
         },
+
       ]);
+
     }
 
     setLoading(false);
+
     setInput("");
+
   };
 
   return (
+
     <Box
       sx={{
-        minHeight: "100vh",
-        bgcolor: "#020617",
-        color: "white",
-        px: { xs: 2, md: 4 },
-        py: 4,
+
+        display: "flex",
+
+        height: "100vh",
+
+        overflow: "hidden",
+
+        background:
+        `
+        radial-gradient(
+          circle at top left,
+          rgba(37,99,235,0.22),
+          transparent 30%
+        ),
+
+        radial-gradient(
+          circle at bottom right,
+          rgba(124,58,237,0.18),
+          transparent 30%
+        ),
+
+        #020617
+        `,
       }}
     >
-      <Box sx={{ maxWidth: 1100, mx: "auto", display: "grid", gap: 3 }}>
+
+      {/* SIDEBAR */}
+
+      <Box
+        sx={{
+          height: "100vh",
+          overflowY: "auto",
+
+          "&::-webkit-scrollbar": {
+            width: "4px",
+          },
+
+          "&::-webkit-scrollbar-thumb": {
+            background:
+            "rgba(255,255,255,0.12)",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <Sidebar />
+      </Box>
+
+      {/* MAIN AREA */}
+
+      <Box
+        sx={{
+
+          flex: 1,
+
+          p: {
+            xs: 1.5,
+            md: 2,
+          },
+
+          display: "flex",
+
+          flexDirection: "column",
+
+          height: "100vh",
+
+          overflow: "hidden",
+        }}
+      >
+
+        {/* TOP HERO */}
+
         <Paper
-          elevation={0}
           sx={{
+
+            position: "relative",
+
+            overflow: "hidden",
+
             p: 3,
-            borderRadius: 4,
-            bgcolor: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            backdropFilter: "blur(14px)",
+
+            borderRadius: "30px",
+
+            mb: 1.5,
+
+            flexShrink: 0,
+
+            background:
+            `
+            linear-gradient(
+              135deg,
+              rgba(37,99,235,0.22),
+              rgba(124,58,237,0.16)
+            )
+            `,
+
+            backdropFilter:
+            "blur(20px)",
+
+            border:
+            "1px solid rgba(255,255,255,0.08)",
+
+            boxShadow:
+            "0 10px 40px rgba(0,0,0,0.35)",
           }}
         >
-          <Typography variant="h5" fontWeight="bold">
-            Secure AI Chat
-          </Typography>
-          <Typography color="text.secondary" sx={{ mt: 1 }}>
-            Ask questions, receive secure responses, and keep every conversation audit-ready.
-          </Typography>
+
+          {/* GLOW */}
+
+          <Box
+            sx={{
+              position: "absolute",
+              width: 250,
+              height: 250,
+
+              borderRadius: "50%",
+
+              background:
+              "rgba(59,130,246,0.18)",
+
+              filter: "blur(90px)",
+
+              top: -120,
+              right: -80,
+            }}
+          />
+
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap"
+            gap={2}
+          >
+
+            <Box zIndex={2}>
+
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                mb={3}
+              >
+                Secure AI Workspace
+              </Typography>
+
+
+              <Stack
+                direction="row"
+                spacing={1.5}
+                mt={4}
+                flexWrap="wrap"
+              >
+
+                <Chip
+                  icon={
+                    <Shield size={15} />
+                  }
+                  label="Protected"
+                  sx={{
+                    bgcolor:
+                    "rgba(34,197,94,0.12)",
+                    color: "#22c55e",
+                    fontWeight: "bold",
+                  }}
+                />
+
+                <Chip
+                  icon={
+                    <Lock size={15} />
+                  }
+                  label="Encrypted"
+                  sx={{
+                    bgcolor:
+                    "rgba(59,130,246,0.12)",
+                    color: "#60a5fa",
+                    fontWeight: "bold",
+                  }}
+                />
+
+                <Chip
+                  icon={
+                    <Zap size={15} />
+                  }
+                  label="Real-time AI"
+                  sx={{
+                    bgcolor:
+                    "rgba(168,85,247,0.12)",
+                    color: "#c084fc",
+                    fontWeight: "bold",
+                  }}
+                />
+
+              </Stack>
+
+            </Box>
+
+          </Stack>
+
         </Paper>
 
+        {/* CHAT WINDOW */}
+
         <Paper
-          elevation={0}
           sx={{
-            p: 0,
-            borderRadius: 4,
+
+            flex: 1,
+
+            minHeight: 0,
+
+            display: "flex",
+
+            flexDirection: "column",
+
             overflow: "hidden",
-            bgcolor: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            display: "grid",
-            minHeight: 600,
+
+            borderRadius: "32px",
+
+            background:
+            "rgba(255,255,255,0.05)",
+
+            backdropFilter:
+            "blur(20px)",
+
+            border:
+            "1px solid rgba(255,255,255,0.08)",
+
+            boxShadow:
+            "0 10px 40px rgba(0,0,0,0.35)",
           }}
         >
-          <Box
-            sx={{
-              p: 3,
-              borderBottom: "1px solid rgba(255,255,255,0.08)",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="subtitle1" color="text.secondary">
-              Chat session
-            </Typography>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => setMessages([])}
-              sx={{ color: "#94a3b8", borderColor: "rgba(255,255,255,0.12)" }}
-            >
-              Clear
-            </Button>
-          </Box>
+
+          {/* CHAT HEADER */}
 
           <Box
             sx={{
-              p: 3,
-              display: "grid",
-              gap: 2,
-              flex: 1,
-              minHeight: 420,
-              maxHeight: 520,
-              overflowY: "auto",
+
+              px: 3,
+              py: 2.2,
+
+              display: "flex",
+
+              justifyContent:
+              "space-between",
+
+              alignItems: "center",
+
+              borderBottom:
+              "1px solid rgba(255,255,255,0.08)",
             }}
           >
-            {messages.map((msg, index) => (
-              <Box
-                key={index}
+
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+            >
+
+              <Avatar
                 sx={{
-                  display: "flex",
-                  justifyContent: msg.sender === "user" ? "flex-end" : "flex-start",
+                  background:
+                  `
+                  linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                  )
+                  `,
                 }}
               >
-                <Paper
-                  sx={{
-                    p: 2.5,
-                    maxWidth: "70%",
-                    borderRadius: 3,
-                    bgcolor: msg.sender === "user" ? "#2563eb" : "#111827",
-                    color: "white",
-                    boxShadow: msg.sender === "user" ? "0 12px 30px rgba(37,99,235,0.24)" : "0 12px 30px rgba(0,0,0,0.16)",
-                  }}
-                >
-                  <Typography sx={{ whiteSpace: "pre-line", lineHeight: 1.7 }}>
-                    {msg.text}
-                  </Typography>
-                </Paper>
-              </Box>
-            ))}
+                <Sparkles size={18} />
+              </Avatar>
 
-            {loading && (
-              <Box sx={{ display: "flex", justifyContent: "center", pt: 2 }}>
-                <CircularProgress color="primary" />
+              <Box>
+
+                <Typography
+                  fontWeight="bold"
+                >
+                  Secure Assistant
+                </Typography>
+
+                <Typography
+                  fontSize="13px"
+                  color="rgba(255,255,255,0.55)"
+                >
+                  AI session active
+                </Typography>
+
               </Box>
-            )}
-            <div ref={messagesEndRef} />
+
+            </Stack>
+
+            <Tooltip title="Clear Chat">
+
+              <IconButton
+
+                onClick={() =>
+                  setMessages([])
+                }
+
+                sx={{
+
+                  bgcolor:
+                  "rgba(255,255,255,0.04)",
+
+                  color: "white",
+
+                  "&:hover": {
+
+                    bgcolor:
+                    "rgba(255,255,255,0.08)",
+                  },
+                }}
+              >
+
+                <Trash2 size={18} />
+
+              </IconButton>
+
+            </Tooltip>
+
           </Box>
+
+          {/* MESSAGES */}
 
           <Box
             sx={{
-              p: 3,
-              borderTop: "1px solid rgba(255,255,255,0.08)",
+
+              flex: 1,
+
+              minHeight: 0,
+
+              overflowY: "auto",
+
+              px: {
+                xs: 2,
+                md: 5,
+              },
+
+              py: 4,
+
               display: "flex",
-              gap: 2,
-              flexWrap: "wrap",
-              alignItems: "center",
+
+              flexDirection: "column",
+
+              gap: 3,
+
+              scrollBehavior: "smooth",
+
+              "&::-webkit-scrollbar": {
+                width: "7px",
+              },
+
+              "&::-webkit-scrollbar-thumb": {
+                background:
+                "rgba(255,255,255,0.12)",
+
+                borderRadius: "20px",
+              },
             }}
           >
+
+            {
+
+              messages.map((msg, index) => (
+
+                <Box
+
+                  key={index}
+
+                  sx={{
+
+                    display: "flex",
+
+                    justifyContent:
+
+                    msg.sender === "user"
+
+                    ? "flex-end"
+
+                    : "flex-start",
+                  }}
+                >
+
+                  <Stack
+                    direction="row"
+                    spacing={2}
+
+                    sx={{
+                      maxWidth: {
+                        xs: "100%",
+                        md: "78%",
+                      },
+                    }}
+                  >
+
+                    {
+
+                      msg.sender === "ai"
+
+                      &&
+
+                      <Avatar
+                        sx={{
+
+                          width: 42,
+                          height: 42,
+
+                          bgcolor:
+                          "rgba(255,255,255,0.08)",
+                        }}
+                      >
+                        <Bot size={18} />
+                      </Avatar>
+
+                    }
+
+                    <Paper
+                      sx={{
+
+                        p: 2.5,
+
+                        borderRadius:
+
+                        msg.sender === "user"
+
+                        ? "26px 26px 8px 26px"
+
+                        : "26px 26px 26px 8px",
+
+                        background:
+
+                        msg.sender === "user"
+
+                        ? `
+                        linear-gradient(
+                          135deg,
+                          #2563eb,
+                          #7c3aed
+                        )
+                        `
+
+                        : "rgba(255,255,255,0.05)",
+
+                        color: "white",
+
+                        border:
+
+                        msg.sender === "ai"
+
+                        ? "1px solid rgba(255,255,255,0.06)"
+
+                        : "none",
+
+                        boxShadow:
+
+                        msg.sender === "user"
+
+                        ? "0 14px 35px rgba(37,99,235,0.35)"
+
+                        : "0 10px 30px rgba(0,0,0,0.25)",
+                      }}
+                    >
+
+                      <Typography
+                        sx={{
+                          whiteSpace:
+                          "pre-line",
+
+                          lineHeight: 1.9,
+
+                          fontSize: "15px",
+                        }}
+                      >
+                        {msg.text}
+                      </Typography>
+
+                    </Paper>
+
+                    {
+
+                      msg.sender === "user"
+
+                      &&
+
+                      <Avatar
+                        sx={{
+
+                          width: 42,
+                          height: 42,
+
+                          background:
+                          `
+                          linear-gradient(
+                            135deg,
+                            #2563eb,
+                            #7c3aed
+                          )
+                          `,
+                        }}
+                      >
+                        <User size={18} />
+                      </Avatar>
+
+                    }
+
+                  </Stack>
+
+                </Box>
+
+              ))
+
+            }
+
+            {
+
+              loading && (
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    py: 3,
+                  }}
+                >
+
+                  <CircularProgress />
+
+                </Box>
+
+              )
+
+            }
+
+            <div ref={messagesEndRef} />
+
+          </Box>
+
+          {/* INPUT */}
+
+          <Box
+            sx={{
+
+              p: 2.5,
+
+              borderTop:
+              "1px solid rgba(255,255,255,0.08)",
+
+              display: "flex",
+
+              alignItems: "flex-end",
+
+              gap: 2,
+
+              background:
+              "rgba(255,255,255,0.02)",
+            }}
+          >
+
             <TextField
+
               fullWidth
-              placeholder="Ask securely..."
+
+              multiline
+
+              maxRows={5}
+
+              placeholder=
+              "Message Secure AI..."
+
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              sx={{
-                bgcolor: "#0b1223",
-                borderRadius: 3,
-              }}
+
+              onChange={(e) =>
+                setInput(
+                  e.target.value
+                )
+              }
+
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
+
+                if (
+                  e.key === "Enter"
+                  &&
+                  !e.shiftKey
+                ) {
+
                   e.preventDefault();
+
                   handleSend();
+
                 }
+
+              }}
+
+              sx={{
+
+                "& .MuiOutlinedInput-root": {
+
+                  borderRadius: "22px",
+
+                  color: "white",
+
+                  px: 1,
+
+                  background:
+                  "rgba(255,255,255,0.04)",
+
+                  backdropFilter:
+                  "blur(10px)",
+
+                  "& fieldset": {
+
+                    borderColor:
+                    "rgba(255,255,255,0.08)",
+                  },
+
+                  "&:hover fieldset": {
+
+                    borderColor:
+                    "rgba(255,255,255,0.18)",
+                  },
+
+                  "&.Mui-focused fieldset": {
+
+                    borderColor:
+                    "#3b82f6",
+                  },
+                },
               }}
             />
+
             <Button
+
               variant="contained"
-              size="large"
+
               onClick={handleSend}
-              sx={{ minWidth: 140, py: 1.75 }}
+
+              disabled={loading}
+
+              sx={{
+
+                minWidth: 64,
+
+                width: 64,
+
+                height: 64,
+
+                borderRadius: "20px",
+
+                background:
+                `
+                linear-gradient(
+                  135deg,
+                  #2563eb,
+                  #7c3aed
+                )
+                `,
+
+                boxShadow:
+                "0 12px 30px rgba(59,130,246,0.35)",
+
+                transition: "0.25s",
+
+                "&:hover": {
+
+                  transform:
+                  "translateY(-2px)",
+
+                  background:
+                  `
+                  linear-gradient(
+                    135deg,
+                    #1d4ed8,
+                    #6d28d9
+                  )
+                  `,
+                },
+              }}
             >
-              Send
+
+              <Send size={22} />
+
             </Button>
+
           </Box>
+
         </Paper>
+
       </Box>
+
     </Box>
+
   );
+
 }
 
 export default Chat;

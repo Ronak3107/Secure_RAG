@@ -1,0 +1,18 @@
+Patient Name: Alex Johnson
+
+Phone Number: 9876543210
+
+Account Number: 9988776655
+
+Disease: Diabetes
+
+Doctor: Dr. Sharma
+store the information that alex lives in usa
+
+store patient blood group O+
+
+store alex residence USA
+
+store alex PAN number - 112233445566778
+
+store Alex health insurance number is 0000001xhealth

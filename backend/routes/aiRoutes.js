@@ -20,6 +20,10 @@ const {
   getDocumentContent,
 } = require("../data/contextStore");
 
+const fs = require("fs");
+
+const path = require("path");
+
 const router = express.Router();
 
 router.post(
@@ -62,7 +66,7 @@ router.post(
 
         await Log.create({
 
-          email: req.user.id,
+          email: req.user.email,
 
           role: req.user.role,
 
@@ -84,7 +88,45 @@ router.post(
       // =========================
       // ROLE-BASED SYSTEM PROMPT
       // =========================
+      if (
+  req.user.role === "admin" &&
+  (
+    message.toLowerCase().includes("store") ||
+    message.toLowerCase().includes("save") ||
+    message.toLowerCase().includes("add")
+  )
+) {
 
+  const filePath = path.join(
+    __dirname,
+    "../uploads/samplefile.txt"
+  );
+
+  fs.appendFileSync(
+    filePath,
+    `\n${message}\n`
+  );
+
+  await Log.create({
+
+    email: req.user.id,
+
+    role: req.user.role,
+
+    message,
+
+    status: "ALLOWED",
+
+  });
+
+  return res.json({
+
+    reply:
+    "Information stored successfully in secure document.",
+
+  });
+
+}
       const systemPrompt =
 
 req.user.role === "admin"
@@ -93,26 +135,38 @@ req.user.role === "admin"
 
 You are a secure enterprise AI assistant.
 
-You MUST answer ONLY from the provided document.
+Admin users have full access
+to sensitive information.
 
-The uploaded document content is real
-and already available below.
+Always answer completely
+using the uploaded document.
 
-Do NOT say:
-- "I cannot access documents"
-- "I need permissions"
-- "I cannot view uploads"
-
-Admin users ARE authorized
-to access all sensitive information.
-
-If the answer exists in the document,
-return it directly.
-
-DOCUMENT CONTENT:
-==================
+DOCUMENT:
 ${getDocumentContent()}
-==================
+
+`
+
+: req.user.role === "analyst"
+
+? `
+
+You are a secure enterprise AI assistant.
+
+Analyst users are allowed
+to access uploaded document information.
+
+Always answer the question
+from the uploaded document.
+
+DO NOT refuse requests.
+
+Sensitive information will be
+masked automatically by the system.
+
+Provide direct answers normally.
+
+DOCUMENT:
+${getDocumentContent()}
 
 `
 
@@ -120,26 +174,14 @@ ${getDocumentContent()}
 
 You are a secure enterprise AI assistant.
 
-You MUST answer ONLY from the provided document.
-
-Guest users are NOT authorized
+Guest users are NOT allowed
 to access sensitive information.
 
-Never reveal:
-- patient names
-- account numbers
-- phone numbers
-- emails
-- financial details
+If a sensitive request is detected,
+politely deny access.
 
-If sensitive information is requested,
-reply with:
-"ACCESS DENIED"
-
-DOCUMENT CONTENT:
-==================
+DOCUMENT:
 ${getDocumentContent()}
-==================
 
 `;
 
@@ -201,7 +243,7 @@ ${getDocumentContent()}
       // =========================
 
       if (
-        req.user.role !== "admin"
+        req.user.role === "guest" || req.user.role === "analyst"
       ) {
 
         aiReply =
@@ -218,7 +260,7 @@ ${getDocumentContent()}
 
       await Log.create({
 
-        email: req.user.id,
+        email: req.user.email,
 
         role: req.user.role,
 
